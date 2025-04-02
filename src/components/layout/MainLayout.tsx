@@ -1,12 +1,21 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { cn } from "../../lib/utils";
-
+import { SiteInfo } from "../../site-info";
+import { Button } from "../ui/button";
+import {
+	NavigationMenu,
+	NavigationMenuItem,
+	NavigationMenuList,
+} from "../ui/navigation-menu";
 interface MainLayoutProps {
 	children: React.ReactNode;
 	className?: string;
 }
 
 export function MainLayout({ children, className }: MainLayoutProps) {
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+
 	return (
 		<div className="min-h-screen bg-background flex flex-col">
 			<header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -14,10 +23,62 @@ export function MainLayout({ children, className }: MainLayoutProps) {
 					<div className="flex items-center gap-6">
 						<Link to="/" className="flex items-center space-x-2">
 							<span className="text-xl font-bold text-primary">
-								My Site
+								{SiteInfo.companyName}
 							</span>
 						</Link>
-						<nav className="hidden md:flex gap-6"></nav>
+						{/* Desktop Navigation */}
+						<NavigationMenu className="hidden md:block">
+							<NavigationMenuList>
+								<NavigationMenuItem>
+									<Link
+										to="/"
+										className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+									>
+										Home
+									</Link>
+								</NavigationMenuItem>
+							</NavigationMenuList>
+						</NavigationMenu>
+
+						{/* Mobile Navigation */}
+						<div className="md:hidden">
+							<Button
+								variant="ghost"
+								size="icon"
+								className="relative"
+								onClick={() => setIsMenuOpen(!isMenuOpen)}
+								aria-label="Toggle Menu"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="24"
+									height="24"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="2"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+								>
+									<line x1="4" y1="12" x2="20" y2="12" />
+									<line x1="4" y1="6" x2="20" y2="6" />
+									<line x1="4" y1="18" x2="20" y2="18" />
+								</svg>
+							</Button>
+							{isMenuOpen && (
+								<div className="absolute top-16 left-0 right-0 bg-background border-b p-4">
+									<nav className="flex flex-col gap-4">
+										<Link
+											to="/"
+											className="px-4 py-2 text-sm hover:bg-accent rounded-md"
+											onClick={() => setIsMenuOpen(false)}
+										>
+											Home
+										</Link>
+									</nav>
+								</div>
+							)}
+						</div>
 					</div>
 				</div>
 			</header>
@@ -33,7 +94,9 @@ export function MainLayout({ children, className }: MainLayoutProps) {
 				<div className="container mx-auto max-w-7xl px-4 pt-8 pb-2">
 					<div className="grid grid-cols-1 gap-8 md:grid-cols-4">
 						<div>
-							<h3 className="text-lg font-semibold">My Site</h3>
+							<h3 className="text-lg font-semibold">
+								{SiteInfo.companyName}
+							</h3>
 							<p className="mt-2 text-sm text-muted-foreground">
 								Professional website.
 							</p>
