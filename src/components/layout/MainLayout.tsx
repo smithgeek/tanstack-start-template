@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, LinkProps } from "@tanstack/react-router";
 import { useState } from "react";
 import { cn } from "../../lib/utils";
 import { SiteInfo } from "../../site-info";
@@ -13,6 +13,20 @@ interface MainLayoutProps {
 	className?: string;
 }
 
+interface IRoute {
+	link: LinkProps["to"];
+	label: string;
+	quick?: boolean;
+}
+
+const routes: IRoute[] = [
+	{
+		link: "/about",
+		label: "About",
+		quick: true,
+	},
+];
+
 export function MainLayout({ children, className }: MainLayoutProps) {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -23,20 +37,22 @@ export function MainLayout({ children, className }: MainLayoutProps) {
 					<div className="flex items-center gap-6">
 						<Link to="/" className="flex items-center space-x-2">
 							<span className="text-xl font-bold text-primary">
-								{SiteInfo.companyName}
+								<Link to="/">{SiteInfo.companyName}</Link>
 							</span>
 						</Link>
 						{/* Desktop Navigation */}
 						<NavigationMenu className="hidden md:block">
 							<NavigationMenuList>
-								<NavigationMenuItem>
-									<Link
-										to="/"
-										className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-									>
-										Home
-									</Link>
-								</NavigationMenuItem>
+								{routes.map(route => (
+									<NavigationMenuItem key={route.link}>
+										<Link
+											to={route.link}
+											className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+										>
+											{route.label}
+										</Link>
+									</NavigationMenuItem>
+								))}
 							</NavigationMenuList>
 						</NavigationMenu>
 
@@ -68,13 +84,17 @@ export function MainLayout({ children, className }: MainLayoutProps) {
 							{isMenuOpen && (
 								<div className="absolute top-16 left-0 right-0 bg-background border-b p-4">
 									<nav className="flex flex-col gap-4">
-										<Link
-											to="/"
-											className="px-4 py-2 text-sm hover:bg-accent rounded-md"
-											onClick={() => setIsMenuOpen(false)}
-										>
-											Home
-										</Link>
+										{routes.map(route => (
+											<Link
+												to={route.link}
+												className="px-4 py-2 text-sm hover:bg-accent rounded-md"
+												onClick={() =>
+													setIsMenuOpen(false)
+												}
+											>
+												{route.label}
+											</Link>
+										))}
 									</nav>
 								</div>
 							)}
@@ -95,7 +115,7 @@ export function MainLayout({ children, className }: MainLayoutProps) {
 					<div className="grid grid-cols-1 gap-8 md:grid-cols-4">
 						<div>
 							<h3 className="text-lg font-semibold">
-								{SiteInfo.companyName}
+								<Link to="/">{SiteInfo.companyName}</Link>
 							</h3>
 							<p className="mt-2 text-sm text-muted-foreground">
 								Professional website.
@@ -106,14 +126,18 @@ export function MainLayout({ children, className }: MainLayoutProps) {
 								Quick Links
 							</h4>
 							<ul className="mt-2 space-y-1">
-								<li>
-									<Link
-										to="/"
-										className="text-sm text-muted-foreground hover:text-primary"
-									>
-										Home
-									</Link>
-								</li>
+								{routes
+									.filter(route => route.quick)
+									.map(route => (
+										<li key={route.link}>
+											<Link
+												to={route.link}
+												className="text-sm text-muted-foreground hover:text-primary"
+											>
+												{route.label}
+											</Link>
+										</li>
+									))}
 							</ul>
 						</div>
 					</div>
